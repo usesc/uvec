@@ -14,8 +14,29 @@ look at this guys repo
 https://github.com/Mashpoe/c-vector/blob/master/vec.c
 */
 
+/*
+wanted functionality:
+
+int myint;
+
+struct vec v;
+vec_init(&v, 10, sizeof(int));
+vec_push1(&v, 1000); 
+vec_pop(&v, &myint);
+// myint = 1000
+vec_remle(&v) // vec remove last element
+
+int pos = 10; int val = 15;
+vec_insert(&v, val, pos)
+vec_remove(&v, pos);
+
+vat(&v, 0); 
+
+*/
+
+#define vat(v, p) (v->data[p])
 struct vec {
-  void *data;
+  void * data;
   size_t elem_size;
   size_t size;
   size_t capacity;
@@ -47,21 +68,33 @@ void vec_realloc(struct vec *v, size_t capacity) {
   v->data = realloc(v->data, v->capacity * v->elem_size);
 }
 
-void vec_realize(struct vec *v) {
-  if (v->size >= v->capacity) {
-    v->capacity = v->capacity * 2;
-    if (v->capacity < 1) v->capacity = 1;
-    vec_realloc(v, v->capacity);
+void vec_realize(struct vec *v, size_t min) {
+  char c = 0;
+
+  if (v->capacity < 1) v->capacity = 1;
+
+  while (v->size >= v->capacity) {
+    v->capacity *= 2;
+    c = 1;
   }
-  else if (v->size < v->capacity/2) {
-    v->capacity = v->capacity / 2;
-    if (v->capacity < 1) v->capacity = 1;
-    vec_realloc(v, v->capacity);
+
+  while (v->size < v->capacity / 2) {
+    v->capacity /= 2;
+    c = 1;
   }
+
+  if (v->capacity < min) {
+    v->capacity = min;
+    c = 1;
+  }
+
+  if (c) vec_realloc(v, v->capacity);
 }
 
 void vec_push(struct vec *v, void *data, size_t elems) {
-  vec_realize(v);
+  if (!data) return;
+  
+  vec_realize(v, v->size + elems);
 
   void *dest = (char *)v->data + (v->size * v->elem_size);
   memcpy(dest, data, v->elem_size * elems);
@@ -71,4 +104,14 @@ void vec_push(struct vec *v, void *data, size_t elems) {
 
 void vec_push1(struct vec *v, void *data) {
   vec_push(v, data, 1);
+}
+
+/* finish this */
+void vec_pop(struct vec *v, void *out, size_t elems) {
+  if (elems > v->size) elems = v->size;
+  v->size -= elems;
+  vec_realize(v, v->size-elems);
+
+  void *src = (char *)v->data + (v->elem_size * (v->size - elems));
+  memcpy(out, src, elems * v->elem_size);
 }
