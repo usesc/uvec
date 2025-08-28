@@ -106,12 +106,14 @@ void vec_push1(struct vec *v, void *data) {
   vec_push(v, data, 1);
 }
 
-/* finish this */
 void vec_pop(struct vec *v, void *out, size_t elems) {
   if (elems > v->size) elems = v->size;
-  v->size -= elems;
-  vec_realize(v, v->size-elems);
 
-  void *src = (char *)v->data + (v->elem_size * (v->size - elems));
-  memcpy(out, src, elems * v->elem_size);
+  if (out && elems > 0) {
+    void *src = (char *)v->data + (v->elem_size * (v->size - elems));
+    memcpy(out, src, elems * v->elem_size);
+  }
+
+  v->size -= elems;
+  vec_realize(v, v->size);
 }
