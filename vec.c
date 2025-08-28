@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <stdint.h>
 
 /*
@@ -105,6 +106,18 @@ void vec_push(struct vec *v, void *data, size_t elems) {
 void vec_push1(struct vec *v, void *data) {
   vec_push(v, data, 1);
 }
+
+/*
+destination needs to be the start of the
+memory block you wanna move, plus the size
+of all the elements you want to insert
+
+insert:
+vec *v, void *data, size_t elems
+
+memmove()
+
+*/
 
 void vec_pop(struct vec *v, void *out, size_t elems) {
   if (elems > v->size) elems = v->size;
