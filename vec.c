@@ -92,8 +92,9 @@ void vec_realize(struct vec *v, size_t min) {
   if (c) vec_realloc(v, v->capacity);
 }
 
+#define vec_push1(v, d) vec_push(v, d, 1)
 void vec_push(struct vec *v, void *data, size_t elems) {
-  if (!data) return;
+  if (!data || !v->data) return;
   
   vec_realize(v, v->size + elems);
 
@@ -103,21 +104,22 @@ void vec_push(struct vec *v, void *data, size_t elems) {
   v->size+=elems;
 }
 
-void vec_push1(struct vec *v, void *data) {
-  vec_push(v, data, 1);
+void vec_insert(struct vec *v, void *data, size_t elems, size_t idx) {
+  if (!data || !v->data) return;
+
+  vec_realize(v, v->size + elems);
+
+  /* black magic */
+  char * mem = (char *)v->data;
+  size_t ind = idx * v->elem_size;
+  size_t byt = v->size * v->elem_size;
+  char * end = mem + byt;
+
+  memmove(mem + ind + b, mem + ind, end - (mem + ind));
+
+  /* */
+  
 }
-
-/*
-destination needs to be the start of the
-memory block you wanna move, plus the size
-of all the elements you want to insert
-
-insert:
-vec *v, void *data, size_t elems
-
-memmove()
-
-*/
 
 void vec_pop(struct vec *v, void *out, size_t elems) {
   if (elems > v->size) elems = v->size;
