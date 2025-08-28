@@ -2,6 +2,13 @@
 #include <stdint.h>
 
 /*
+UNTESTED CODE
+
+TODO:
+test
+*/
+
+/*
 TODO:
 look at this guys repo
 https://github.com/Mashpoe/c-vector/blob/master/vec.c
@@ -14,14 +21,17 @@ struct vec {
   size_t capacity;
 };
 
-void vec_init(struct vec *v, size_t size, size_t elem_size) {
+void *vec_init(struct vec *v, size_t size, size_t elem_size) {
   v->size = size;
   v->capacity = size ? size : 1; 
   v->elem_size = elem_size;
   v->data = malloc(v->capacity * v->elem_size);
   if (!v->data) {
-    v->size = v->capacity = 0;
+    v->size = 0;
+    v->capacity = 0;
+    return NULL;
   }
+  return v->data;
 }
 
 void vec_uninit(struct vec *v) {
@@ -53,8 +63,8 @@ void vec_realize(struct vec *v) {
 void vec_push(struct vec *v, void *data, size_t elems) {
   vec_realize(v);
 
-  void *dest = (char *)v->data + (v->size*v->elem_size);
-  memcpy(dest, data, v->elem_size*elems);
+  void *dest = (char *)v->data + (v->size * v->elem_size);
+  memcpy(dest, data, v->elem_size * elems);
 
   v->size+=elems;
 }
