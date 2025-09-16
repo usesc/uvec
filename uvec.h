@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#include <sys/mman.h>
 #include <sys/stat.h>
 
 /* Define UVEC_NO_SHRINK if you dont want your vectors to shrink */
